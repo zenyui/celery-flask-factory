@@ -1,0 +1,9 @@
+.env
+local.py
+env/
+instance/
+secrets/
+*.pyc
+__pycache__/
+.ipynb_checkpoints/
+*.rdb
