@@ -28,6 +28,8 @@ The Flask app exposes an API that accepts a `POST` request to `/task/` to start 
 
 Per the recommendations of Celery documentation, this Flask/Celery app was tested with RabbitMQ as the message broker and Redis as the results backend, although (in theory) it should accept any [supported](http://docs.celeryproject.org/en/latest/getting-started/brokers/index.html#broker-overview) broker/backend.
 
+This sample runs both as Docker containers, but feel free to run locally or in the cloud if it is more convenient for your use case - just make sure you modify your URL's in the configuration file accordingly.
+
 ### Configuration
 
 This Flask server accepts configuration in a YAML/JSON file, which by default is located in `./secrets/api-config.yaml` (an excluded path in the `.gitignore`). This path can be manually overwritten by setting the environment variable `FLASK_CONFIG`.
@@ -41,7 +43,7 @@ celery:
   result_backend: redis://localhost:6379
 ```
 
-### Running the server
+### Running the services
 
 You can run this example by starting the message broker, celery worker, and flask app separately.
 
