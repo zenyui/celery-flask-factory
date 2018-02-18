@@ -12,7 +12,7 @@ def view_base():
 @bp.route('/task/', methods=['POST'])
 def view_start_task():
     '''start task, return task_id'''
-    
+
     logger.info('start task...')
     task = tasks.sample_task.apply_async()
 
@@ -23,10 +23,10 @@ def view_start_task():
     }), 202
 
 @bp.route('/task/<task_id>', methods=['GET'])
-def view_check_task():
+def view_check_task(task_id):
     '''return task state'''
 
-    task = tasks.test_flask_context.AsyncResult(task_id)
+    task = tasks.sample_task.AsyncResult(task_id)
     output = {'task_id': task.id, 'state': task.state}
     if task.state == 'SUCCESS':
         output.update({'result': task.result})

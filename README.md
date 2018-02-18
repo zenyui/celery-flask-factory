@@ -37,7 +37,7 @@ Sample:
 port: 8080
 secret_key: my_secret_key
 celery:
-  broker_url: ampq://localhost:5672
+  broker_url: amqp://localhost:5672
   result_backend: redis://localhost:6379
 ```
 
@@ -69,3 +69,23 @@ Finally, in a separate terminal, the Flask app can be started in debug mode with
 . env/bin/activate
 python ./cli.py
 ```
+
+Once the broker, backend, Celery worker, and Flask server are all running, tasks can be started by issuing:
+```sh
+curl -X POST localhost:8080/task/
+```
+
+Above command will return a `<task_id>`, which can be used to check on the status of that task:
+```sh
+curl -X GET localhost:8080/task/<task_id>
+```
+
+### Cleanup
+
+If you used the above commands to start docker containers for Rabbitmq and Redis, you can kill and delete them by issuing:
+```sh
+docker kill some-rabbit some-redis && \
+docker rm some-rabbit some-redis
+```
+
+To make sure they're gone, check with `docker ps -a`
