@@ -13,6 +13,7 @@ def create_celery(debug=False):
     return entrypoint(debug=debug, mode='celery')
 
 def entrypoint(debug=False, mode='app'):
+    assert isinstance(mode, str), 'bad mode type "{}"'.format(type(mode))
     assert mode in ('app','celery'), 'bad mode "{}"'.format(mode)
 
     app = Flask(__name__)
@@ -23,10 +24,8 @@ def entrypoint(debug=False, mode='app'):
     configure_logging(debug=debug)
     configure_celery(app, tasks.celery)
 
+    # register blueprints
     app.register_blueprint(routes.bp, url_prefix='')
-
-    assert isinstance(mode, str), 'bad mode type "{}"'.format(type(mode))
-    assert mode in ('app','celery'), 'unknown mode "{}"'.format(mode)
 
     if mode=='app':
         return app
@@ -48,7 +47,6 @@ def configure_app(app):
         conf_obj = yaml.load(f)
 
     app.secret_key = conf_obj['secret_key']
-    # app.config['SQLALCHEMY_DATABASE_URI'] = conf_obj['sqlalchemy']['database_uri']
     app.config['CELERY_BROKER_URL'] = conf_obj['celery']['broker_url']
     app.config['CELERY_RESULT_BACKEND'] = conf_obj['celery']['result_backend']
 
