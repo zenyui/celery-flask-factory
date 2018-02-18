@@ -25,19 +25,21 @@ def entrypoint(debug=False, mode='app'):
 
     app.register_blueprint(routes.bp, url_prefix='')
 
+    assert isinstance(mode, str), 'bad mode type "{}"'.format(type(mode))
+    assert mode in ('app','celery'), 'unknown mode "{}"'.format(mode)
+
     if mode=='app':
         return app
     elif mode=='celery':
         return celery
 
 def configure_app(app):
-    
+
     logger.info('configuring flask app')
 
-    if not os.environ.get('FUNNEL_API_CONFIG'):
-        config_fp = './secrets/api-config-dev.yaml'
-    else:
-        config_fp = os.environ.get('FUNNEL_API_CONFIG')
+    config_fp = os.environ.get('FLASK_CONFIG')
+    if not config_fp:
+        config_fp = './secrets/api-config.yaml'
 
     assert os.path.exists(config_fp), '"{}" not found'.format(config_fp)
     logger.info('reading config\n{}'.format(config_fp))
@@ -45,6 +47,7 @@ def configure_app(app):
     with open(config_fp, 'r') as f:
         conf_obj = yaml.load(f)
 
+    app.secret_key = conf_obj['secret_key']
     # app.config['SQLALCHEMY_DATABASE_URI'] = conf_obj['sqlalchemy']['database_uri']
     app.config['CELERY_BROKER_URL'] = conf_obj['celery']['broker_url']
     app.config['CELERY_RESULT_BACKEND'] = conf_obj['celery']['result_backend']
