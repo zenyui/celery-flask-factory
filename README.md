@@ -20,8 +20,8 @@ The repo is organized as follows:
   - `server/core.py` creates the application factory
   - `server/controller/routes.py` defines the endpoints
   - `server/controller/tasks.py` defines Celery tasks
-- `cli.py` is a cli interface for starting the Flask app in debug mode
-- `celery_worker.py` is the entrypoint for the Celery worker
+- `entrypoint_api.py` is a cli interface for starting the Flask app in debug mode
+- `entrypoint_celery.py` is the entrypoint for the Celery worker
 - `requirements.txt` is the list of python dependencies for pip
 - `docker.env` defines the environment variables for the app
 - `docker-compose.yml` defines the services
