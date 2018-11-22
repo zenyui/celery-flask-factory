@@ -8,5 +8,5 @@ COPY requirements.txt .
 RUN pip install -r ./requirements.txt
 
 COPY server ./server/
-COPY celery_worker.py ./
-COPY cli.py ./
+COPY entrypoint_api.py ./
+COPY entrypoint_celery.py ./

@@ -6,7 +6,7 @@ services:
       dockerfile: ./Dockerfile
     image: celery-factory-demo
     container_name: some_api
-    command: python cli.py
+    command: python entrypoint_api.py --port 8080 --debug
     env_file:
      - ./docker.env
     ports:
@@ -22,9 +22,11 @@ services:
     depends_on:
       - redis
       - rabbitmq
-    command: celery worker -A celery_worker.celery --loglevel=info
+    command: celery worker -A entrypoint_celery.celery --loglevel=info
     env_file:
      - ./docker.env
+    volumes:
+      - .:/app/
   redis:
     image: redis:alpine
     container_name: some_redis
