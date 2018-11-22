@@ -1,0 +1,45 @@
+version: '3.4'
+services:
+  api:
+    build: 
+      context: .
+      dockerfile: ./Dockerfile
+    image: celery-factory-demo
+    command: python cli.py
+    env_file:
+     - ./default.env
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/app/
+  worker:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    image: celery-factory-demo
+    depends_on:
+      - redis
+      - rabbitmq
+    command: celery worker -A celery_worker.celery --loglevel=info
+    env_file:
+     - ./default.env
+  redis:
+    image: redis:alpine
+    container_name: some_redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+  rabbitmq:
+    image: rabbitmq:alpine
+    container_name: some_rabbitmq
+    ports:
+      - "5672:5672"
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 30s
+      timeout: 10s
+      retries: 5

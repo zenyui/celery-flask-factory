@@ -1,22 +1,13 @@
 import datetime
 import time
-import random
-import math
-import json
 import logging
-from google.cloud import storage
-from celery import Celery, Task
-from flask import has_app_context
+from celery import Celery
 
 logger = logging.getLogger()
 celery = Celery(__name__, autofinalize=False)
 
 @celery.task(bind=True)
-def add(self, x, y):
-    return x+y
-
-@celery.task(bind=True)
-def sample_task(self):
+def wait_task(self, sleep_time):
     '''sample task that sleeps 5 seconds then returns the current datetime'''
-    time.sleep(5)
+    time.sleep(sleep_time)
     return datetime.datetime.now().isoformat()
