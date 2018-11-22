@@ -38,7 +38,6 @@ This sample runs the services as Docker containers (see [./docker-compose.yml](.
 This Flask server accepts configuration as environment variables, which are set by default in the file [./docker.env](./docker.env).
 
 Configuration:
-- `FLASK_PORT` is the port that flask will listen to
 - `CELERY_BROKER_URL` is the rabbitmq URL
 - `CELERY_RESULT_BACKEND` is the redis URL
 
