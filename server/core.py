@@ -1,6 +1,5 @@
 import os
 import logging
-import yaml
 from flask import Flask
 from server.controller import routes, tasks, celery
 
@@ -36,19 +35,9 @@ def configure_app(app):
 
     logger.info('configuring flask app')
 
-    config_fp = os.environ.get('FLASK_CONFIG')
-    if not config_fp:
-        config_fp = './secrets/api-config.yaml'
-
-    assert os.path.exists(config_fp), '"{}" not found'.format(config_fp)
-    logger.info('reading config\n{}'.format(config_fp))
-
-    with open(config_fp, 'r') as f:
-        conf_obj = yaml.load(f)
-
-    app.secret_key = conf_obj['secret_key']
-    app.config['CELERY_BROKER_URL'] = conf_obj['celery']['broker_url']
-    app.config['CELERY_RESULT_BACKEND'] = conf_obj['celery']['result_backend']
+    app.config['FLASK_PORT'] = os.environ.get('FLASK_PORT')
+    app.config['CELERY_BROKER_URL'] = os.environ.get('CELERY_BROKER_URL')
+    app.config['CELERY_RESULT_BACKEND'] = os.environ.get('CELERY_RESULT_BACKEND')
 
 def configure_celery(app, celery):
 

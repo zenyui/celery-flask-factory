@@ -23,71 +23,64 @@ The repo is organized as follows:
 - `cli.py` is a cli interface for starting the Flask app in debug mode
 - `celery_worker.py` is the entrypoint for the Celery worker
 - `requirements.txt` is the list of python dependencies for pip
+- `docker.env` defines the environment variables for the app
+- `docker-compose.yml` defines the services
+- `Dockerfile` is the image for the app & celery worker
 
-The Flask app exposes an API that accepts a `POST` request to `/task/` to start an task and return its ID. To check on the status of that task, issue a `GET` request to `/task/<task_id>`. The featured task is a dummy function that sleeps 5 seconds then returns a datetime.
+The Flask app exposes an API that accepts a `POST` request to `/sleep/<seconds>` to start an task and return its ID. To check on the status of that task, issue a `GET` request to `/sleep/<task_id>`. The featured task is a dummy function that sleeps for `<seconds>` time then returns a datetime.
 
 Per the recommendations of Celery documentation, this Flask/Celery app was tested with RabbitMQ as the message broker and Redis as the results backend, although (in theory) it should accept any [supported](http://docs.celeryproject.org/en/latest/getting-started/brokers/index.html#broker-overview) broker/backend.
 
-This sample runs both as Docker containers, but feel free to run locally or in the cloud if it is more convenient for your use case - just make sure you modify your URL's in the configuration file accordingly.
+This sample runs the services as Docker containers (see [./docker-compose.yml](./docker-compose.yml)), but feel free to run locally or in the cloud if it is more convenient for your use case - just make sure you modify your URL's in the configuration file accordingly.
 
 ### Configuration
 
-This Flask server accepts configuration in a YAML/JSON file, which by default is located in `./secrets/api-config.yaml` (an excluded path in the `.gitignore`). This path can be manually overwritten by setting the environment variable `FLASK_CONFIG`.
+This Flask server accepts configuration as environment variables, which are set by default in the file [./docker.env](./docker.env).
 
-Sample:
-```yaml
-port: 8080
-secret_key: my_secret_key
-celery:
-  broker_url: amqp://localhost:5672
-  result_backend: redis://localhost:6379
-```
+Configuration:
+- `FLASK_PORT` is the port that flask will listen to
+- `CELERY_BROKER_URL` is the rabbitmq URL
+- `CELERY_RESULT_BACKEND` is the redis URL
 
 ### Running the services
 
-You can run this example by starting the message broker, celery worker, and flask app separately.
+You can run this example by starting starting the services with `docker-compose`.
 
-Make sure your broker and backend are running (Docker is a convenient way to get this running). The following examples use the alpine distribution of rabbitmq and redis and forwards their default ports to `localhost`.
+Pull and build all images:
 ```sh
-docker run -d --hostname rabbit --name some-rabbit -p 5672:5672 rabbitmq:alpine
-docker run -d --hostname redis --name some-redis -p 6379:6379 redis:alpine
+docker-compose build
 ```
 
-Create a Python 3 environment and install dependencies:
+Start all the containers in the background
 ```sh
-virtualenv env -p `which python3`
-. env/bin/activate
-pip install -r ./requirements.txt
+docker-compose up -d
 ```
 
-Then start your Celery worker in the new python environment by issuing:
+To check on the state of the containers, run:
 ```sh
-. env/bin/activate
-celery worker -A celery_worker.celery --loglevel=info
+docker-compose ps
 ```
 
-Finally, in a separate terminal, the Flask app can be started in debug mode with the supplied `cli.py`
+Observe the API and celery worker logs:
 ```sh
-. env/bin/activate
-python ./cli.py
+docker-compose logs -f api worker
 ```
 
-Once the broker, backend, Celery worker, and Flask server are all running, tasks can be started by issuing:
+Create a single 30-second `sleep` task
 ```sh
-curl -X POST localhost:8080/task/
+curl -X POST http://localhost:8080/sleep/30
 ```
 
 Above command will return a `<task_id>`, which can be used to check on the status of that task:
 ```sh
-curl -X GET localhost:8080/task/<task_id>
+curl -X GET localhost:8080/sleep/<task_id>
 ```
 
 ### Cleanup
 
-If you used the above commands to start docker containers for Rabbitmq and Redis, you can kill and delete them by issuing:
+You can bring down all containers in this sample app with:
 ```sh
-docker kill some-rabbit some-redis && \
-docker rm some-rabbit some-redis
+docker-compose down
 ```
 
-To make sure they're gone, check with `docker ps -a`
+To make sure they're gone, check with `docker-compose ps`
