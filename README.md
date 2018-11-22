@@ -2,18 +2,18 @@
 
 ### Introduction
 
-This repo demonstrates configuring the Celery task queue with Flask in the [application factory pattern](http://flask.pocoo.org/docs/0.12/patterns/appfactories/).
+This repo demonstrates configuring the Celery task queue with Flask in the [application factory pattern](http://flask.pocoo.org/docs/1.0/patterns/appfactories/).
 
 
 The Flask application factory pattern delays configuration until the WSGI server is started, which allows for secure, dynamic configuration files. The official Celery tutorials assume all configuration is available upon import, so this sample Flask server shows how to configure Celery in a factory pattern.
 
 Specifically, this example provides:
 - support for late binding of the Broker URL
-- executing all celery tasks within an [app context](http://flask.pocoo.org/docs/0.12/patterns/celery/#configuring-celery)
+- executing all celery tasks within an [app context](http://flask.pocoo.org/docs/1.0/patterns/celery/#configure)
 
 ### Implementation details
 
-This sample aims to simulate a realistic Flask server by employing [Blueprints](http://flask.pocoo.org/docs/0.12/blueprints/) and separate files for view functions and celery task definitions.
+This sample aims to simulate a realistic Flask server by employing [Blueprints](http://flask.pocoo.org/docs/1.0/blueprints/) and separate files for view functions and celery task definitions.
 
 The repo is organized as follows:
 - `server/` is the app
