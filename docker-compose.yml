@@ -5,9 +5,10 @@ services:
       context: .
       dockerfile: ./Dockerfile
     image: celery-factory-demo
+    container_name: some_api
     command: python cli.py
     env_file:
-     - ./default.env
+     - ./docker.env
     ports:
       - "8080:8080"
     volumes:
@@ -17,12 +18,13 @@ services:
       context: .
       dockerfile: ./Dockerfile
     image: celery-factory-demo
+    container_name: some_worker
     depends_on:
       - redis
       - rabbitmq
     command: celery worker -A celery_worker.celery --loglevel=info
     env_file:
-     - ./default.env
+     - ./docker.env
   redis:
     image: redis:alpine
     container_name: some_redis

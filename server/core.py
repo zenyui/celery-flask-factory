@@ -35,7 +35,6 @@ def configure_app(app):
 
     logger.info('configuring flask app')
 
-    app.secret_key = os.environ.get('FLASK_SECRET_KEY')
     app.config['FLASK_PORT'] = os.environ.get('FLASK_PORT')
     app.config['CELERY_BROKER_URL'] = os.environ.get('CELERY_BROKER_URL')
     app.config['CELERY_RESULT_BACKEND'] = os.environ.get('CELERY_RESULT_BACKEND')
