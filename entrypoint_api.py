@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from server import create_app
 import argparse
 
